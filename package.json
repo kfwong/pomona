@@ -1,0 +1,22 @@
+{
+  "name": "fomosumo-remaster",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "WONG KANG FEI <kangfei.wong@thoughtworks.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^5.0.4",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {
+    "phaser": "^3.19.0"
+  }
+}
