@@ -1,0 +1,20 @@
+{
+	"key": "player-jump",
+	"type": "frame",
+	"frames": [
+		{
+			"key": "player-jump",
+			"frame": 0,
+			"duration": 0
+		}
+	],
+	"frameRate": 30,
+	"duration": 33.333333333333336,
+	"skipMissedFrames": true,
+	"delay": 0,
+	"repeat": -1,
+	"repeatDelay": 0,
+	"yoyo": false,
+	"showOnStart": false,
+	"hideOnComplete": false
+}

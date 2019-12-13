@@ -1,5 +1,5 @@
 {
-  "name": "fomosumo-remaster",
+  "name": "pomona",
   "version": "1.0.0",
   "main": "index.js",
   "author": "WONG KANG FEI <kangfei.wong@thoughtworks.com>",
@@ -11,12 +11,13 @@
   "devDependencies": {
     "copy-webpack-plugin": "^5.0.4",
     "ts-loader": "^6.0.4",
+    "tslint": "^5.19.0",
     "typescript": "^3.5.3",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
-    "phaser": "^3.19.0"
+    "phaser": "3.20.1"
   }
 }

@@ -1,7 +1,16 @@
 {
 	"compilerOptions": {
-		"target": "es5",
-		"sourceMap": true
+		"target": "es6",
+		"noImplicitAny": true,
+		"sourceMap": true,
+		"allowJs": true,
+		"typeRoots": [
+			"./node_modules/@types",
+			"./node_modules/phaser/types"
+		],
+		"types": [
+			"Phaser"
+		]
 	},
 	"include": [
 		"**/*.ts"
