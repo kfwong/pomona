@@ -46,7 +46,6 @@ export class Player extends Phaser.GameObjects.Sprite {
 
 	private get isJumping() {
 		return !(this.body.onFloor() ||
-			this.body.touching.down ||
 			this.body.blocked.down)
 	}
 

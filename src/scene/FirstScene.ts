@@ -22,14 +22,10 @@ export class FirstScene extends Phaser.Scene {
 	public create() {
 		this.drawBackground()
 		this.spawnPlayer()
-		this.spawnRandomBananas()
+		this.spawnBananas()
 
-		this.physics.world.on("worldbounds", (body: Phaser.Physics.Arcade.Body) => {
-			const line = new Phaser.Geom.Line(0, 0, 768 * 2, 0)
-			body.y = 0
-			body.x = line.getRandomPoint().x
-			body.setVelocityY(250 + 100 * Math.random())
-		})
+		this.handleBananasDropOnGround()
+		this.handlePlayerCatchesBanana()
 	}
 
 	public update() {
@@ -38,18 +34,41 @@ export class FirstScene extends Phaser.Scene {
 	}
 
 	private spawnPlayer() {
-		this.player = new Player({ scene: this, x: 100, y: 200, texture: "player" })
+		const spawningPoint = this.randomSpawningPoint()
+		this.player = new Player({ scene: this, x: spawningPoint.x, y: 600, texture: "player" })
 	}
 
-	private spawnRandomBananas() {
-		const line = new Phaser.Geom.Line(0, 0, 768 * 2, 0)
+	private spawnBananas() {
 		const _bananas = []
 		for (let i = 0; i < 10; i++) {
-			const pt = line.getRandomPoint()
-			const banana = new Banana({ scene: this, x: pt.x, y: pt.y, texture: "banana" })
+			const spawnPoint = this.randomSpawningPoint()
+			const banana = new Banana({ scene: this, x: spawnPoint.x, y: 0, texture: "banana" })
 			_bananas.push(banana)
 		}
 		this.bananas = this.physics.add.group(_bananas)
+	}
+
+	private respawnBanana(banana: Banana) {
+		const spawningPoint = this.randomSpawningPoint()
+		banana.body.y = 0
+		banana.body.x = spawningPoint.x
+		banana.body.setVelocityY(250 + 100 * Math.random())
+	}
+
+	private handleBananasDropOnGround() {
+		this.physics.world.on("worldbounds", (body: Phaser.Physics.Arcade.Body) => {
+			if (body.gameObject instanceof Banana) {
+				this.respawnBanana(body.gameObject)
+			}
+		})
+	}
+
+	private handlePlayerCatchesBanana() {
+		this.physics.add.overlap(this.player, this.bananas, (_player, banana: Banana) => this.respawnBanana(banana))
+	}
+
+	private randomSpawningPoint() {
+		return new Phaser.Geom.Line(0, 0, 768 * 2, 1366 * 2).getRandomPoint()
 	}
 
 	private drawBackground() {

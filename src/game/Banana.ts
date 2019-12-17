@@ -20,6 +20,7 @@ export class Banana extends Phaser.GameObjects.Sprite {
 		this.setScale(1.5, 1.5)
 		this.body.setCollideWorldBounds(true)
 		this.body.onWorldBounds = true
+		this.body.immovable = true
 
 		this.currentScene.add.existing(this)
 	}
