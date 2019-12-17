@@ -9,7 +9,7 @@
 			"./node_modules/phaser/types"
 		],
 		"types": [
-			"Phaser"
+			"phaser"
 		]
 	},
 	"include": [

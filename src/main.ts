@@ -1,3 +1,4 @@
+import * as Phaser from "phaser"
 import { Game } from "./game/Game"
 import { FirstScene } from "./scene/FirstScene"
 

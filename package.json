@@ -10,7 +10,6 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^5.0.4",
-    "phaser3-docs": "github:photonstorm/phaser3-docs",
     "ts-loader": "^6.0.4",
     "tslint": "^5.19.0",
     "typescript": "^3.5.3",
