@@ -2,15 +2,13 @@ import * as Phaser from "phaser"
 import { Banana } from "../game/Banana"
 import { Player } from "../game/Player"
 
-export class FirstScene extends Phaser.Scene {
+export class GameScene extends Phaser.Scene {
 	private player: Player
 	private bananas: Phaser.GameObjects.Group
 
 	constructor() {
 		super({
-			active: false,
-			visible: false,
-			key: "game",
+			key: "GameScene",
 		})
 	}
 
@@ -64,7 +62,10 @@ export class FirstScene extends Phaser.Scene {
 	}
 
 	private handlePlayerCatchesBanana() {
-		this.physics.add.overlap(this.player, this.bananas, (_player, banana: Banana) => this.respawnBanana(banana))
+		this.physics.add.overlap(this.player, this.bananas, (player, banana: Banana) => {
+			this.events.emit("catchedbanana", player, banana)
+			this.respawnBanana(banana)
+		})
 	}
 
 	private randomSpawningPoint() {
@@ -92,7 +93,7 @@ export class FirstScene extends Phaser.Scene {
 		this.load.spritesheet("player-fall", "/assets/Pixel Adventure/Main Characters/Mask Dude/Fall (32x32).png", { frameWidth: 32, frameHeight: 32 })
 		this.load.animation("player-fall", "/assets/animations/player-fall.json")
 
-		this.load.spritesheet("banana", "/assets/Pixel Adventure/Items/Fruits/Bananas.png", { frameWidth: 32, frameHeight: 32 })
+		this.load.spritesheet("banana-idle", "/assets/Pixel Adventure/Items/Fruits/Bananas.png", { frameWidth: 32, frameHeight: 32 })
 		this.load.animation("banana-idle", "/assets/animations/banana-idle.json")
 	}
 }

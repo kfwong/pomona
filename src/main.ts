@@ -1,6 +1,7 @@
 import * as Phaser from "phaser"
 import { Game } from "./game/Game"
-import { FirstScene } from "./scene/FirstScene"
+import { GameScene } from "./scene/GameScene"
+import { HUDScene } from "./scene/HUDScene"
 
 export const game = new Game({
 	title: "pomona",
@@ -13,7 +14,6 @@ export const game = new Game({
 			debug: true,
 		},
 	},
-	parent: "game",
 	backgroundColor: "#000000",
-	scene: FirstScene,
+	scene: [GameScene, HUDScene],
 })
