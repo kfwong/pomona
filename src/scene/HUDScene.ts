@@ -12,15 +12,15 @@ export class HUDScene extends Phaser.Scene {
 	}
 
 	public create() {
-		const info = this.add.text(10, 10, "Score: 0", { font: "48px MonsterFriendFore", fill: "#7a5632" })
+		const scoreboard = this.add.text(10, 10, "Score: 0", { font: "48px MonsterFriendFore", fill: "#7a5632" })
 
-		const ourGame = this.scene.get("GameScene")
+		const gameScene = this.scene.get("GameScene")
 
-		ourGame.events.on("catchedbanana", () => {
+		gameScene.events.on("catchedbanana", () => {
 
 			this.score += 1
 
-			info.setText("Score: " + this.score)
+			scoreboard.setText("Score: " + this.score)
 
 		}, this)
 	}
