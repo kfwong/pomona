@@ -1,4 +1,5 @@
 import * as Phaser from "phaser"
+import { config } from "../config"
 
 export class HUDScene extends Phaser.Scene {
 	private score: number
@@ -12,7 +13,7 @@ export class HUDScene extends Phaser.Scene {
 	}
 
 	public create() {
-		const scoreboard = this.add.text(10, 10, "Score: 0", { font: "48px MonsterFriendFore", fill: "#7a5632" })
+		const scoreboard = this.add.text(10, 10, "Score: 0", { font: "48px MonsterFriendFore", fill: config.color3 })
 
 		const gameScene = this.scene.get("GameScene")
 

@@ -18,6 +18,8 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
+    "ismobilejs": "^1.0.3",
+    "peerjs": "^1.2.0",
     "phaser": "3.20.1"
   }
 }

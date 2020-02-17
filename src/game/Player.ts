@@ -4,6 +4,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 	public body!: Phaser.Physics.Arcade.Body
 	private currentScene: Phaser.Scene
 	private cursors: Phaser.Types.Input.Keyboard.CursorKeys
+	private isSpawning: boolean
 
 	private velocity: number
 
@@ -11,6 +12,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 		super(params.scene, params.x, params.y, params.texture, params.frame)
 		this.currentScene = params.scene
 		this.cursors = this.currentScene.input.keyboard.createCursorKeys()
+		this.isSpawning = true
 		this.velocity = 500
 		this.initSprite()
 	}
@@ -22,11 +24,16 @@ export class Player extends Phaser.GameObjects.Sprite {
 
 	private initSprite() {
 		this.currentScene.physics.world.enable(this)
-
-		this.setScale(2.5, 2.5)
-		this.body.setCollideWorldBounds(true)
-		this.body.setGravityY(1000)
-
+		this.body.syncBounds = true
+		this.on("animationcomplete", (_animation: any, _frame: any) => {
+			if (this.anims.getCurrentKey() === "player-appearing") {
+				this.body.setCollideWorldBounds(true)
+				this.body.setGravityY(1000)
+				this.setScale(2.5, 2.5)
+				this.isSpawning = false
+				this.removeAllListeners()
+			}
+		}, this)
 		this.currentScene.add.existing(this)
 	}
 
@@ -62,10 +69,14 @@ export class Player extends Phaser.GameObjects.Sprite {
 	}
 
 	private handleAnimation() {
+		if (this.isSpawning) {
+			this.anims.play("player-appearing", true)
+			return
+		}
 		if (this.body.velocity.y < 0) {
 			this.anims.play("player-jump", true)
 		} else if (this.body.velocity.y > 0) {
-			this.anims.play("player-fall", true)
+			this.anims.play("player-fall")
 		} else if (this.body.velocity.x === 0) {
 			this.anims.play("player-idle", true)
 		} else if (this.body.velocity.x < 0) {
