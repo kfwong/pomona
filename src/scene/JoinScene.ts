@@ -1,9 +1,7 @@
 import * as Phaser from "phaser"
 import { config } from "../config"
-import { Guest } from "../game/Guest"
 
 export class JoinScene extends Phaser.Scene {
-	private guest: Guest
 	private roomId: string
 
 	constructor() {
@@ -19,20 +17,7 @@ export class JoinScene extends Phaser.Scene {
 
 	public create() {
 		this.drawBackground()
-		this.roomId = this.showRoomIdPrompt()
-		this.guest = Guest.Instance(this.roomId)
-
-		this.add.text(10, 10, this.roomId, { font: "48px MonsterFriendFore", fill: config.color1 })
-	}
-
-	private showRoomIdPrompt() {
-		const sixDigitsRegex = /^\d{6}$/
-		let roomId: string = null
-		do {
-			roomId = window.prompt("Enter six digits room id:")
-		}while (roomId === null || !sixDigitsRegex.test(roomId.trim()))
-
-		return roomId
+		this.add.text(10, 10, "ROOM ID: " + this.roomId, { font: "14px Monaco", fill: config.color1 })
 	}
 
 	private drawBackground() {

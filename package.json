@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server --host=0.0.0.0 --disable-host-check --useLocalIp"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^5.0.4",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "ismobilejs": "^1.0.3",
-    "peerjs": "^1.2.0",
+    "peerjs": "1.0.0",
     "phaser": "3.20.1"
   }
 }

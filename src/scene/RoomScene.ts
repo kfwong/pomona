@@ -1,33 +1,43 @@
 import * as Phaser from "phaser"
 import { config } from "../config"
-import { Host } from "../game/Host"
+import { Connection } from "../connection/Connection"
 import "../game/Number.extension"
 import { Player } from "../game/Player"
 
 export class RoomScene extends Phaser.Scene {
-	private host: Host
+	private connection: Connection
 	private player: Player
 
 	constructor() {
 		super({
 			key: "RoomScene",
 		})
+		this.connection = Connection.Instance()
 		this.spawnPlayer = this.spawnPlayer.bind(this)
 	}
 
 	public preload() {
 		this.loadBackground()
 		this.loadAnimations()
-		this.initializeHost()
+		this.setupListeners()
 	}
 
 	public create() {
 		this.drawBackground()
-		this.add.text(10, 10, "Waiting for players...", { font: "48px MonsterFriendFore", fill: config.color2 })
+
+		this.add.text(10, 10, `Room ID: ${this.connection.id}`, { font: "24px MonsterFriendFore", fill: config.color2 })
+
+		this.add.text(10, 50, "Waiting for players...", { font: "24px MonsterFriendFore", fill: config.color2 })
 	}
 
 	public update() {
 		if (this.player) { this.player.update() }
+	}
+
+	private setupListeners() {
+		this.connection.onConnectionEstablished = () => {
+			this.spawnPlayer()
+		}
 	}
 
 	private spawnPlayer() {
@@ -62,12 +72,5 @@ export class RoomScene extends Phaser.Scene {
 
 		this.load.spritesheet("player-fall", "/assets/Pixel Adventure/Main Characters/Mask Dude/Fall (32x32).png", { frameWidth: 32, frameHeight: 32 })
 		this.load.animation("player-fall", "/assets/animations/player-fall.json")
-	}
-
-	private initializeHost() {
-		this.host = Host.Instance
-		this.host.onConnected((guestId: string) => {
-			this.spawnPlayer()
-		})
 	}
 }

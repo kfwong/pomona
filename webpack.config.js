@@ -35,8 +35,8 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'dist'),
     https: false,
     contentBase: ['./src', './dist'],
-    inline: true,
-    hot: true
+    inline: false,
+    hot: false
   },
 
   plugins: [
