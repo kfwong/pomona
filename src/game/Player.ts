@@ -1,9 +1,14 @@
 import * as Phaser from "phaser"
+import { Command } from "./Command"
 
 export class Player extends Phaser.GameObjects.Sprite {
+
+	private get isJumping() {
+		return !(this.body.onFloor() || this.body.blocked.down)
+	}
 	public body!: Phaser.Physics.Arcade.Body
+	public currentAction: Command
 	private currentScene: Phaser.Scene
-	private cursors: Phaser.Types.Input.Keyboard.CursorKeys
 	private isSpawning: boolean
 
 	private velocity: number
@@ -11,7 +16,6 @@ export class Player extends Phaser.GameObjects.Sprite {
 	constructor(params: any) {
 		super(params.scene, params.x, params.y, params.texture, params.frame)
 		this.currentScene = params.scene
-		this.cursors = this.currentScene.input.keyboard.createCursorKeys()
 		this.isSpawning = true
 		this.velocity = 500
 		this.initSprite()
@@ -51,17 +55,12 @@ export class Player extends Phaser.GameObjects.Sprite {
 		this.body.setVelocityX(0)
 	}
 
-	private get isJumping() {
-		return !(this.body.onFloor() ||
-			this.body.blocked.down)
-	}
-
 	private handleInput() {
-		if (this.cursors.space.isDown && !this.isJumping) {
+		if (this.currentAction === "jump" && !this.isJumping) {
 			this.jump()
-		} else if (this.cursors.left.isDown) {
+		} else if (this.currentAction === "left") {
 			this.runLeft()
-		} else if (this.cursors.right.isDown) {
+		} else if (this.currentAction === "right") {
 			this.runRight()
 		} else {
 			this.stop()

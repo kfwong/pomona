@@ -1,8 +1,11 @@
-import * as Phaser from "phaser"
-import { Banana } from "../game/Banana"
-import { Player } from "../game/Player"
+import * as Phaser from "phaser";
+import { Connection } from "../connection/Connection";
+import { Banana } from "../game/Banana";
+import { Command } from '../game/Command';
+import { Player } from "../game/Player";
 
 export class GameScene extends Phaser.Scene {
+	private connection: Connection
 	private player: Player
 	private bananas: Phaser.GameObjects.Group
 
@@ -10,25 +13,35 @@ export class GameScene extends Phaser.Scene {
 		super({
 			key: "GameScene",
 		})
+		this.connection = Connection.Instance()
 	}
 
 	public preload() {
 		this.loadBackground()
 		this.loadAnimations()
+		this.setupListeners()
 	}
 
 	public create() {
 		this.drawBackground()
-		this.spawnPlayer()
 		this.spawnBananas()
 
 		this.handleBananasDropOnGround()
-		this.handlePlayerCatchesBanana()
 	}
 
 	public update() {
-		this.player.update()
+		if (this.player) { this.player.update() }
 		this.bananas.getChildren().forEach((banana) => banana.update())
+	}
+
+	private setupListeners() {
+		this.connection.onConnectionEstablished = () => {
+			this.spawnPlayer()
+			this.handlePlayerCatchesBanana()
+		}
+		this.connection.onReceivedData = (data: Command) => {
+			this.player.currentAction = data
+		}
 	}
 
 	private spawnPlayer() {
@@ -81,6 +94,9 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private loadAnimations() {
+		this.load.spritesheet("player-appearing", "/assets/Pixel Adventure/Main Characters/Appearing (96x96).png", { frameWidth: 96, frameHeight: 96 })
+		this.load.animation("player-appearing", "/assets/animations/player-appearing.json")
+
 		this.load.spritesheet("player-idle", "/assets/Pixel Adventure/Main Characters/Mask Dude/Idle (32x32).png", { frameWidth: 32, frameHeight: 32 })
 		this.load.animation("player-idle", "/assets/animations/player-idle.json")
 

@@ -1,9 +1,7 @@
 import * as Phaser from "phaser"
 import { config } from "../config"
 
-export class JoinScene extends Phaser.Scene {
-	private roomId: string
-
+export class GamePadScene extends Phaser.Scene {
 	constructor() {
 		super({
 			active: true,
@@ -17,7 +15,8 @@ export class JoinScene extends Phaser.Scene {
 
 	public create() {
 		this.drawBackground()
-		this.add.text(10, 10, "ROOM ID: " + this.roomId, { font: "14px Monaco", fill: config.color1 })
+		this.add.text(10, 10, "SWIPE LEFT or RIGHT to move", { fontSize: "14px", fontFamily: "SuperMario", fill: config.color1 })
+		this.add.text(10, 50, "TAP to jump", { fontSize: "14px", fontFamily: "SuperMario", fill: config.color1 })
 	}
 
 	private drawBackground() {

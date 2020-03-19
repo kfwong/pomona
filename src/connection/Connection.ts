@@ -1,4 +1,5 @@
 import Peer from "peerjs"
+import { Command } from "../game/Command"
 
 const config = {
 	host: "peerjs-signaler.herokuapp.com",
@@ -22,6 +23,7 @@ export class Connection {
 	private connection: Peer.DataConnection
 
 	private _onConnectionEstablished: () => void
+	private _onReceivedData: (command: Command) => void
 
 	private constructor(id?: string) {
 		this.id = id
@@ -48,8 +50,9 @@ export class Connection {
 				this._onConnectionEstablished()
 			})
 
-			connection.on("data", (data: any) => {
+			connection.on("data", (data: Command) => {
 				console.log(`[${connection.peer}]: `, data)
+				this._onReceivedData(data)
 			})
 
 			connection.on("close", () => {
@@ -75,13 +78,17 @@ export class Connection {
 		})
 	}
 
-	public send(message: any) {
+	public send(data: Command) {
 		if (this.connection) {
-			this.connection.send(message)
+			this.connection.send(data)
 		}
 	}
 
 	public set onConnectionEstablished(action: () => void) {
 		this._onConnectionEstablished = action
+	}
+
+	public set onReceivedData(action: (data: Command) => void) {
+		this._onReceivedData = action
 	}
 }
