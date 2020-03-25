@@ -1,52 +1,62 @@
-import * as Phaser from "phaser";
-import { Connection } from "../connection/Connection";
-import { Banana } from "../game/Banana";
-import { Command } from '../game/Command';
-import { Player } from "../game/Player";
+import { Map } from "immutable"
+import * as Phaser from "phaser"
+import { Connection } from "../connection/Connection"
+import { Banana } from "../game/Banana"
+import { Command } from "../game/Command"
+import { MaskDude } from "../game/MaskDude"
+import { Player } from "../game/Player"
 
 export class GameScene extends Phaser.Scene {
 	private connection: Connection
-	private player: Player
+
+	private players: Map<string, Player>
 	private bananas: Phaser.GameObjects.Group
 
 	constructor() {
-		super({
-			key: "GameScene",
-		})
+		super({ key: "GameScene" })
 		this.connection = Connection.Instance()
+		this.players = Map()
 	}
 
 	public preload() {
 		this.loadBackground()
-		this.loadAnimations()
-		this.setupListeners()
+		Banana.loadResource(this)
+		MaskDude.loadResource(this)
 	}
 
 	public create() {
 		this.drawBackground()
 		this.spawnBananas()
-
+		this.handlePlayer()
 		this.handleBananasDropOnGround()
 	}
 
 	public update() {
-		if (this.player) { this.player.update() }
-		this.bananas.getChildren().forEach((banana) => banana.update())
+		this.players.forEach((player: Player) => player.update())
+		this.bananas.getChildren().forEach((banana: Banana) => banana.update())
 	}
 
-	private setupListeners() {
-		this.connection.onConnectionEstablished = () => {
-			this.spawnPlayer()
-			this.handlePlayerCatchesBanana()
+	private handlePlayer() {
+		this.connection.onConnectionEstablished = (id) => {
+			this.spawnPlayer(id)
+			this.handlePlayerCatchesBanana(id)
 		}
-		this.connection.onReceivedData = (data: Command) => {
-			this.player.currentAction = data
+		this.connection.onReceivedData = (id: string, data: Command) => {
+			this.handlePlayerAction(id, data)
 		}
 	}
 
-	private spawnPlayer() {
+	private handlePlayerAction(id: string, command: Command) {
+		this.players.get(id).action = command
+	}
+
+	private spawnPlayer(id: string) {
 		const spawningPoint = this.randomSpawningPoint()
-		this.player = new Player({ scene: this, x: spawningPoint.x, y: 600, texture: "player" })
+		this.players = this.players.set(id, new MaskDude({
+			scene: this,
+			x: spawningPoint.x,
+			y: 600,
+		}))
 	}
 
 	private spawnBananas() {
@@ -74,8 +84,8 @@ export class GameScene extends Phaser.Scene {
 		})
 	}
 
-	private handlePlayerCatchesBanana() {
-		this.physics.add.overlap(this.player, this.bananas, (player, banana: Banana) => {
+	private handlePlayerCatchesBanana(id: string) {
+		this.physics.add.overlap(this.players.get(id), this.bananas, (player, banana: Banana) => {
 			this.events.emit("catchedbanana", player, banana)
 			this.respawnBanana(banana)
 		})
@@ -91,25 +101,5 @@ export class GameScene extends Phaser.Scene {
 
 	private loadBackground() {
 		this.load.spritesheet("background", "/assets/Pixel Adventure/Background/Brown.png", { frameWidth: 64, frameHeight: 64 })
-	}
-
-	private loadAnimations() {
-		this.load.spritesheet("player-appearing", "/assets/Pixel Adventure/Main Characters/Appearing (96x96).png", { frameWidth: 96, frameHeight: 96 })
-		this.load.animation("player-appearing", "/assets/animations/player-appearing.json")
-
-		this.load.spritesheet("player-idle", "/assets/Pixel Adventure/Main Characters/Mask Dude/Idle (32x32).png", { frameWidth: 32, frameHeight: 32 })
-		this.load.animation("player-idle", "/assets/animations/player-idle.json")
-
-		this.load.spritesheet("player-run", "/assets/Pixel Adventure/Main Characters/Mask Dude/Run (32x32).png", { frameWidth: 32, frameHeight: 32 })
-		this.load.animation("player-run", "/assets/animations/player-run.json")
-
-		this.load.spritesheet("player-jump", "/assets/Pixel Adventure/Main Characters/Mask Dude/Jump (32x32).png", { frameWidth: 32, frameHeight: 32 })
-		this.load.animation("player-jump", "/assets/animations/player-jump.json")
-
-		this.load.spritesheet("player-fall", "/assets/Pixel Adventure/Main Characters/Mask Dude/Fall (32x32).png", { frameWidth: 32, frameHeight: 32 })
-		this.load.animation("player-fall", "/assets/animations/player-fall.json")
-
-		this.load.spritesheet("banana-idle", "/assets/Pixel Adventure/Items/Fruits/Bananas.png", { frameWidth: 32, frameHeight: 32 })
-		this.load.animation("banana-idle", "/assets/animations/banana-idle.json")
 	}
 }

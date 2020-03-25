@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "hammerjs": "^2.0.8",
+    "immutable": "^4.0.0-rc.12",
     "ismobilejs": "^1.0.3",
     "peerjs": "1.0.0",
     "phaser": "3.20.1"

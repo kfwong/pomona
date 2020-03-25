@@ -1,6 +1,16 @@
 import * as Phaser from "phaser"
 
 export class Banana extends Phaser.GameObjects.Sprite {
+
+	public static readonly animationKeys = {
+		IDLE: "banana-idle",
+	}
+
+	public static loadResource(context: Phaser.Scene) {
+		context.load.spritesheet(Banana.animationKeys.IDLE, "/assets/Pixel Adventure/Items/Fruits/Bananas.png", { frameWidth: 32, frameHeight: 32 })
+		context.load.animation(Banana.animationKeys.IDLE, "/assets/animations/banana-idle.json")
+	}
+
 	public body!: Phaser.Physics.Arcade.Body
 	private currentScene: Phaser.Scene
 
@@ -26,7 +36,7 @@ export class Banana extends Phaser.GameObjects.Sprite {
 	}
 
 	private handleAnimation() {
-		this.anims.play("banana-idle", true)
+		this.anims.play(Banana.animationKeys.IDLE, true)
 	}
 
 }

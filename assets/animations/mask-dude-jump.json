@@ -1,9 +1,9 @@
 {
-	"key": "player-jump",
+	"key": "mask-dude-jump",
 	"type": "frame",
 	"frames": [
 		{
-			"key": "player-jump",
+			"key": "mask-dude-jump",
 			"frame": 0,
 			"duration": 0
 		}

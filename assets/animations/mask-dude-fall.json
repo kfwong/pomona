@@ -1,9 +1,9 @@
 {
-	"key": "player-fall",
+	"key": "mask-dude-fall",
 	"type": "frame",
 	"frames": [
 		{
-			"key": "player-fall",
+			"key": "mask-dude-fall",
 			"frame": 0,
 			"duration": 0
 		}
