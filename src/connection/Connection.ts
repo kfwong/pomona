@@ -7,7 +7,7 @@ const config = {
 	path: "/",
 	port: 443,
 	secure: true,
-	debug: 2,
+	debug: 3,
 }
 
 export class Connection {
@@ -25,6 +25,7 @@ export class Connection {
 
 	private _onConnectionEstablished: (id: string) => void
 	private _onReceivedData: (id: string, command: Command) => void
+	private _onConnectionClosed: (id: string) => void
 
 	private constructor(id?: string) {
 		this.id = id
@@ -37,11 +38,15 @@ export class Connection {
 		})
 
 		this.peer.on("error", (error) => {
-			console.error(error)
+			console.error("ERROR:" + error)
 		})
 
 		this.peer.on("disconnected", () => {
 			console.log("Disconnected from signaller.")
+		})
+
+		this.peer.on("close", () => {
+			console.log("close from ")
 		})
 
 		this.peer.on("connection", (connection: Peer.DataConnection) => {
@@ -60,7 +65,13 @@ export class Connection {
 
 			connection.on("close", () => {
 				console.log(`Connection to ${connection.peer} closed.`)
-				this.connections = this.connections.delete(connection.peer)
+			})
+
+			connection.peerConnection.addEventListener("iceconnectionstatechange", (event) => {
+				if (connection.peerConnection.iceConnectionState === "disconnected") {
+					this.connections = this.connections.delete(connection.peer)
+					this._onConnectionClosed(connection.peer)
+				}
 			})
 		})
 
@@ -100,5 +111,9 @@ export class Connection {
 
 	public set onReceivedData(action: (id: string, data: Command) => void) {
 		this._onReceivedData = action
+	}
+
+	public set onConnectionClosed(action: (id: string) => void) {
+		this._onConnectionClosed = action
 	}
 }

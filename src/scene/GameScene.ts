@@ -3,11 +3,12 @@ import * as Phaser from "phaser"
 import { Connection } from "../connection/Connection"
 import { Banana } from "../game/Banana"
 import { Command } from "../game/Command"
-import { MaskDude } from "../game/MaskDude"
 import { Player } from "../game/Player"
+import { PlayerFactory } from "../game/PlayerFactory"
 
 export class GameScene extends Phaser.Scene {
 	private connection: Connection
+	private playerFactory: PlayerFactory
 
 	private players: Map<string, Player>
 	private bananas: Phaser.GameObjects.Group
@@ -16,12 +17,15 @@ export class GameScene extends Phaser.Scene {
 		super({ key: "GameScene" })
 		this.connection = Connection.Instance()
 		this.players = Map()
+		this.playerFactory = new PlayerFactory()
 	}
 
 	public preload() {
 		this.loadBackground()
 		Banana.loadResource(this)
-		MaskDude.loadResource(this)
+		PlayerFactory.loadResource(this)
+
+		// this.load.spritesheet("player-disappearing", "/assets/Pixel Adventure/Main Characters/Desappearing (96x96).png" , { frameWidth: 96, frameHeight: 96 })
 	}
 
 	public create() {
@@ -29,6 +33,15 @@ export class GameScene extends Phaser.Scene {
 		this.spawnBananas()
 		this.handlePlayer()
 		this.handleBananasDropOnGround()
+
+		// this.anims.create({
+		// 	key: "player-disappearing",
+		// 	frames: this.anims.generateFrameNumbers("player-disappearing", {start: 0, end: 10}),
+		// 	frameRate: 30,
+		// 	repeat: -1,
+		// })
+
+		// console.log(JSON.stringify(this.anims.toJSON("player-disappearing")))
 	}
 
 	public update() {
@@ -44,6 +57,9 @@ export class GameScene extends Phaser.Scene {
 		this.connection.onReceivedData = (id: string, data: Command) => {
 			this.handlePlayerAction(id, data)
 		}
+		this.connection.onConnectionClosed = (id) => {
+			this.despawnPlayer(id)
+		}
 	}
 
 	private handlePlayerAction(id: string, command: Command) {
@@ -52,11 +68,21 @@ export class GameScene extends Phaser.Scene {
 
 	private spawnPlayer(id: string) {
 		const spawningPoint = this.randomSpawningPoint()
-		this.players = this.players.set(id, new MaskDude({
+		const player = this.playerFactory.create({
+			type: "pink-man",
 			scene: this,
 			x: spawningPoint.x,
 			y: 600,
-		}))
+		})
+		this.players = this.players.set(id, player)
+		player.spawn()
+	}
+
+	private despawnPlayer(id: string) {
+		const player = this.players.get(id)
+		if (!player) { return }
+		player.despawn()
+		this.players = this.players.delete(id)
 	}
 
 	private spawnBananas() {

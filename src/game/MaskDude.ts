@@ -14,11 +14,15 @@ export class MaskDude extends Player {
 		RUN: "mask-dude-run",
 		JUMP: "mask-dude-jump",
 		FALL: "mask-dude-fall",
+		DISAPPEAR: "player-disappearing",
 	}
 
 	public static loadResource(context: Phaser.Scene) {
 		context.load.spritesheet(MaskDude.animationKeys.APPEAR, "/assets/Pixel Adventure/Main Characters/Appearing (96x96).png", { frameWidth: 96, frameHeight: 96 })
 		context.load.animation(MaskDude.animationKeys.APPEAR, "/assets/animations/player-appearing.json")
+
+		context.load.spritesheet(MaskDude.animationKeys.DISAPPEAR, "/assets/Pixel Adventure/Main Characters/Desappearing (96x96).png", { frameWidth: 96, frameHeight: 96 })
+		context.load.animation(MaskDude.animationKeys.DISAPPEAR, "/assets/animations/player-disappearing.json")
 
 		context.load.spritesheet(MaskDude.animationKeys.IDLE, "/assets/Pixel Adventure/Main Characters/Mask Dude/Idle (32x32).png", { frameWidth: 32, frameHeight: 32 })
 		context.load.animation(MaskDude.animationKeys.IDLE, "/assets/animations/mask-dude-idle.json")
@@ -44,6 +48,7 @@ export class MaskDude extends Player {
 				idle: MaskDude.animationKeys.IDLE,
 				run: MaskDude.animationKeys.RUN,
 				appear: MaskDude.animationKeys.APPEAR,
+				disappear: MaskDude.animationKeys.DISAPPEAR,
 			},
 		})
 	}

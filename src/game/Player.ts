@@ -11,6 +11,7 @@ interface IPlayerConfig {
 		idle: string | Phaser.Animations.Animation
 		run: string | Phaser.Animations.Animation
 		appear: string | Phaser.Animations.Animation,
+		disappear: string | Phaser.Animations.Animation,
 	}
 	texture?: string
 	frame?: string | number
@@ -23,10 +24,10 @@ export class Player extends Phaser.GameObjects.Sprite {
 	}
 
 	public body!: Phaser.Physics.Arcade.Body
-	public readonly config: IPlayerConfig
+	private config: IPlayerConfig
 	private currentAction: Command
 	private context: Phaser.Scene
-	private isSpawning: boolean
+	private isReady: boolean
 
 	private velocity: number
 
@@ -34,9 +35,8 @@ export class Player extends Phaser.GameObjects.Sprite {
 		super(config.scene, config.x, config.y, config.texture, config.frame)
 		this.config = config
 		this.context = config.scene
-		this.isSpawning = true
-		this.velocity = 500
-		this.initSprite()
+		this.isReady = false
+		this.initPhysics()
 	}
 
 	public update() {
@@ -44,20 +44,33 @@ export class Player extends Phaser.GameObjects.Sprite {
 		this.handleAnimation()
 	}
 
+	public spawn() {
+		this.anims.play(this.config.animationKeys.appear, true)
+	}
+
+	public despawn() {
+		this.anims.play(this.config.animationKeys.disappear, true)
+	}
+
 	private isJumping() {
 		return !(this.body.onFloor() || this.body.blocked.down)
 	}
 
-	private initSprite() {
+	private initPhysics() {
 		this.context.physics.world.enable(this)
+		this.velocity = 500
 		this.body.syncBounds = true
 		this.on("animationcomplete", (_animation: any, _frame: any) => {
 			if (this.anims.getCurrentKey() === this.config.animationKeys.appear) {
 				this.body.setCollideWorldBounds(true)
 				this.body.setGravityY(1000)
 				this.setScale(2.5, 2.5)
-				this.isSpawning = false
-				this.removeAllListeners()
+				this.isReady = true
+			}
+
+			if (this.anims.getCurrentKey() === this.config.animationKeys.disappear) {
+				this.isReady = false
+				this.destroy()
 			}
 		}, this)
 		this.context.add.existing(this)
@@ -90,10 +103,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 	}
 
 	private handleAnimation() {
-		if (this.isSpawning) {
-			this.anims.play(this.config.animationKeys.appear, true)
-			return
-		}
+		if (!this.isReady) { return }
 		if (this.body.velocity.y < 0) {
 			this.anims.play(this.config.animationKeys.jump, true)
 		} else if (this.body.velocity.y > 0) {
